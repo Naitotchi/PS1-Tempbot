@@ -67,17 +67,20 @@ def handle_temp_message(message):
 # This function is invoked by the MQTT library when we get
 # a message
 def on_message(client, userdata, message):
-    payload = str(message.payload.decode())
-    # convert string to a dictionary
-    payload_dict = json.loads(payload)    
-    # There are lots of different types of payloads, we
-    # want the one that explicitly has the "message" key
-    # because we need to know what sensor we're working with,
-    # and if that key exists, then we only want the messages
-    # where "tempsense" is in the text, as those are the messages
-    # we're working with
-    if 'message' in payload_dict and 'tempsense' in payload_dict['message']:        
-        handle_temp_message(payload_dict['message'])
+    try:
+        payload = str(message.payload.decode())
+        # convert string to a dictionary
+        payload_dict = json.loads(payload)    
+        # There are lots of different types of payloads, we
+        # want the one that explicitly has the "message" key
+        # because we need to know what sensor we're working with,
+        # and if that key exists, then we only want the messages
+        # where "tempsense" is in the text, as those are the messages
+        # we're working with
+        if 'message' in payload_dict and 'tempsense' in payload_dict['message']:        
+            handle_temp_message(payload_dict['message'])
+    except Exception as e:
+        print("Got a message error: {str(e)}")
 
 def setup_mqtt_reader():
     # Initialize the MQTT client and connect to the broker
